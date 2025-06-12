@@ -1,0 +1,1 @@
+/* Content for database.sql */
