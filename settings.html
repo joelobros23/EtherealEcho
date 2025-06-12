@@ -3,11 +3,158 @@
 <head>
 	<meta charset='UTF-8'>
 	<meta name='viewport' content='width=device-width, initial-scale=1.0'>
-	<title>EtherealEcho</title>
-	<script src='[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)'></script>
+	<title>EtherealEcho - Settings</title>
+	<script src='https://cdn.tailwindcss.com'></script>
 	<link rel='stylesheet' href='assets/css/style.css'>
 </head>
 <body class='bg-gray-100'>
-	<!-- Content for settings.html -->
+	<?php include 'includes/header.php'; ?>
+
+	<div class='container mx-auto p-4'>
+		<h1 class='text-2xl font-bold mb-4'>Account Settings</h1>
+
+		<div id='settings-message' class='mb-4 text-green-500 hidden'></div>
+
+		<div class='bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4'>
+			<h2 class='text-xl font-semibold mb-2'>Change Password</h2>
+			<div class='mb-4'>
+				<label class='block text-gray-700 text-sm font-bold mb-2' for='current_password'>
+					Current Password
+				</label>
+				<input class='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline' id='current_password' type='password' placeholder='Current Password'>
+			</div>
+			<div class='mb-4'>
+				<label class='block text-gray-700 text-sm font-bold mb-2' for='new_password'>
+					New Password
+				</label>
+				<input class='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline' id='new_password' type='password' placeholder='New Password'>
+			</div>
+			<div class='mb-6'>
+				<label class='block text-gray-700 text-sm font-bold mb-2' for='confirm_password'>
+					Confirm New Password
+				</label>
+				<input class='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline' id='confirm_password' type='password' placeholder='Confirm New Password'>
+			</div>
+			<div class='flex items-center justify-between'>
+				<button class='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline' type='button' id='change_password_button'>
+					Change Password
+				</button>
+			</div>
+		</div>
+
+		<div class='bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4'>
+			<h2 class='text-xl font-semibold mb-2'>Update Profile Information</h2>
+			<div class='mb-4'>
+				<label class='block text-gray-700 text-sm font-bold mb-2' for='bio'>
+					Bio
+				</label>
+				<textarea class='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline' id='bio' placeholder='Your Bio'></textarea>
+			</div>
+			<div class='flex items-center justify-between'>
+				<button class='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline' type='button' id='update_bio_button'>
+					Update Bio
+				</button>
+			</div>
+		</div>
+	</div>
+
+	<?php include 'includes/footer.php'; ?>
+	<script src='assets/js/main.js'></script>
+	<script>
+		document.addEventListener('DOMContentLoaded', function() {
+			const changePasswordButton = document.getElementById('change_password_button');
+			const updateBioButton = document.getElementById('update_bio_button');
+			const settingsMessage = document.getElementById('settings-message');
+
+			changePasswordButton.addEventListener('click', function() {
+				const currentPassword = document.getElementById('current_password').value;
+				const newPassword = document.getElementById('new_password').value;
+				const confirmPassword = document.getElementById('confirm_password').value;
+
+				if (newPassword !== confirmPassword) {
+					alert('New password and confirm password do not match.');
+					return;
+				}
+
+				// Basic password strength check
+				if (newPassword.length < 6) {
+					alert('New password must be at least 6 characters long.');
+					return;
+				}
+				
+				fetch('api/update_password.php', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({
+						current_password: currentPassword,
+						new_password: newPassword
+					})
+				})
+				.then(response => response.json())
+				.then(data => {
+					if (data.success) {
+						settingsMessage.textContent = 'Password changed successfully!';
+						settingsMessage.classList.remove('hidden');
+						settingsMessage.classList.add('text-green-500');
+						settingsMessage.classList.remove('text-red-500');
+
+						// Clear the input fields
+						document.getElementById('current_password').value = '';
+						document.getElementById('new_password').value = '';
+						document.getElementById('confirm_password').value = '';
+					} else {
+						settingsMessage.textContent = data.message || 'Failed to change password.';
+						settingsMessage.classList.remove('hidden');
+						settingsMessage.classList.add('text-red-500');
+						settingsMessage.classList.remove('text-green-500');
+					}
+				})
+				.catch(error => {
+					console.error('Error:', error);
+					settingsMessage.textContent = 'An error occurred. Please try again.';
+					settingsMessage.classList.remove('hidden');
+					settingsMessage.classList.add('text-red-500');
+					settingsMessage.classList.remove('text-green-500');
+				});
+			});
+
+			updateBioButton.addEventListener('click', function() {
+				const bio = document.getElementById('bio').value;
+
+				fetch('api/update_profile.php', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({
+						bio: bio
+					})
+				})
+				.then(response => response.json())
+				.then(data => {
+					if (data.success) {
+						settingsMessage.textContent = 'Bio updated successfully!';
+						settingsMessage.classList.remove('hidden');
+						settingsMessage.classList.add('text-green-500');
+						settingsMessage.classList.remove('text-red-500');
+					} else {
+						settingsMessage.textContent = data.message || 'Failed to update bio.';
+						settingsMessage.classList.remove('hidden');
+						settingsMessage.classList.add('text-red-500');
+						settingsMessage.classList.remove('text-green-500');
+					}
+				})
+				.catch(error => {
+					console.error('Error:', error);
+					settingsMessage.textContent = 'An error occurred. Please try again.';
+					settingsMessage.classList.remove('hidden');
+					settingsMessage.classList.add('text-red-500');
+					settingsMessage.classList.remove('text-green-500');
+				});
+			});
+		});
+	</script>
 </body>
 </html>
