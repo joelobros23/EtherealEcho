@@ -3,11 +3,106 @@
 <head>
 	<meta charset='UTF-8'>
 	<meta name='viewport' content='width=device-width, initial-scale=1.0'>
-	<title>EtherealEcho</title>
-	<script src='[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)'></script>
+	<title>EtherealEcho - Home</title>
+	<script src='https://cdn.tailwindcss.com'></script>
 	<link rel='stylesheet' href='assets/css/style.css'>
 </head>
 <body class='bg-gray-100'>
-	<!-- Content for home.html -->
+	<?php include 'includes/header.php'; ?>
+
+	<div class='container mx-auto py-8'>
+		<div class='grid grid-cols-1 md:grid-cols-3 gap-4'>
+			<!-- Left Sidebar (Optional) -->
+			<div class='hidden md:block'>
+				<!-- Add sidebar content here -->
+			</div>
+
+			<!-- Main Content -->
+			<div class='md:col-span-2'>
+				<!-- Post Creation Form -->
+				<div class='bg-white rounded-lg shadow-md p-4 mb-4'>
+					<h2 class='text-lg font-semibold mb-2'>Share a Thought</h2>
+					<form id='createPostForm'>
+						<textarea id='postContent' name='postContent' placeholder='What are you reflecting on?' class='w-full p-2 border rounded-md focus:ring focus:ring-blue-200'></textarea>
+						<button type='submit' class='bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-200'>Post</button>
+					</form>
+				</div>
+
+				<!-- Newsfeed -->
+				<div id='newsfeed' class='space-y-4'>
+					<!-- Posts will be loaded here -->
+				</div>
+			</div>
+
+			<!-- Right Sidebar (Optional) -->
+			<div class='hidden md:block'>
+				<!-- Add sidebar content here -->
+			</div>
+		</div>
+	</div>
+
+	<?php include 'includes/footer.php'; ?>
+	<script src='assets/js/main.js'></script>
+	<script>
+		document.addEventListener('DOMContentLoaded', function() {
+			// Load posts on page load
+			loadPosts();
+
+			// Handle post creation form submission
+			document.getElementById('createPostForm').addEventListener('submit', function(event) {
+				event.preventDefault();
+				const content = document.getElementById('postContent').value;
+				if (content.trim() !== '') {
+					createPost(content);
+				} else {
+					alert('Please enter some content.');
+				}
+			});
+
+			async function createPost(content) {
+				const response = await fetch('api/create_post.php', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({
+						content: content
+					})
+				});
+
+				const data = await response.json();
+
+				if (data.success) {
+					document.getElementById('postContent').value = ''; // Clear the textarea
+					loadPosts(); // Reload posts
+				} else {
+					alert('Error creating post: ' + data.message);
+				}
+			}
+
+			async function loadPosts() {
+				const response = await fetch('api/get_posts.php');
+				const data = await response.json();
+				const newsfeed = document.getElementById('newsfeed');
+				newsfeed.innerHTML = ''; // Clear existing posts
+
+				if (data.success) {
+					data.posts.forEach(post => {
+						const postElement = document.createElement('div');
+						postElement.classList.add('bg-white', 'rounded-lg', 'shadow-md', 'p-4');
+						postElement.innerHTML = `
+							<p class='font-semibold'>${post.username}</p>
+							<p class='text-gray-600'>${post.content}</p>
+							<p class='text-gray-400 text-sm'>${post.created_at}</p>
+							<!-- Add comments section here later -->
+						`;
+						newsfeed.appendChild(postElement);
+					});
+				} else {
+					newsfeed.innerHTML = '<p>No posts found.</p>';
+				}
+			}
+		});
+	</script>
 </body>
 </html>
