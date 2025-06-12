@@ -3,11 +3,34 @@
 <head>
 	<meta charset='UTF-8'>
 	<meta name='viewport' content='width=device-width, initial-scale=1.0'>
-	<title>EtherealEcho</title>
-	<script src='[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)'></script>
+	<title>EtherealEcho - Profile</title>
+	<script src='https://cdn.tailwindcss.com'></script>
 	<link rel='stylesheet' href='assets/css/style.css'>
 </head>
 <body class='bg-gray-100'>
-	<!-- Content for profile.html -->
+	<?php include 'includes/header.php'; ?>
+
+	<div class='container mx-auto mt-8 p-8 bg-white shadow-md rounded-lg'>
+		<h1 class='text-2xl font-semibold mb-4'>Profile</h1>
+
+		<div id='profile-details' class='mb-6'>
+			<!-- Profile Details will be loaded here -->
+			<img id='profile-picture' src='' alt='Profile Picture' class='w-32 h-32 rounded-full mb-4'>
+			<h2 id='username' class='text-xl font-semibold'></h2>
+			<p id='bio' class='text-gray-600'></p>
+			<p id='email' class='text-gray-600'></p>
+			<button id='edit-profile-button' class='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4'>Edit Profile</button>
+
+		</div>
+
+		<div id='profile-posts'>
+			<h2 class='text-xl font-semibold mb-4'>Posts</h2>
+			<!-- Posts will be loaded here -->
+			<div id="posts-container"></div>
+		</div>
+	</div>
+
+	<?php include 'includes/footer.php'; ?>
+	<script src='assets/js/profile.js'></script>
 </body>
 </html>
