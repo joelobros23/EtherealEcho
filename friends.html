@@ -3,11 +3,32 @@
 <head>
 	<meta charset='UTF-8'>
 	<meta name='viewport' content='width=device-width, initial-scale=1.0'>
-	<title>EtherealEcho</title>
-	<script src='[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)'></script>
+	<title>EtherealEcho - Friends</title>
+	<script src='https://cdn.tailwindcss.com'></script>
 	<link rel='stylesheet' href='assets/css/style.css'>
 </head>
 <body class='bg-gray-100'>
-	<!-- Content for friends.html -->
+	<?php include 'includes/header.php'; ?>
+
+	<div class='container mx-auto py-8'>
+		<h1 class='text-2xl font-bold mb-4'>Friends</h1>
+
+		<div id='friendRequests' class='mb-6'>
+			<h2 class='text-lg font-semibold mb-2'>Friend Requests</h2>
+			<div id='friendRequestsList'>
+				<!-- Friend requests will be loaded here -->
+			</div>
+		</div>
+
+		<div id='friendsList'>
+			<h2 class='text-lg font-semibold mb-2'>My Friends</h2>
+			<div id='friends'>
+				<!-- Friends will be loaded here -->
+			</div>
+		</div>
+	</div>
+
+	<?php include 'includes/footer.php'; ?>
+	<script src='assets/js/friends.js'></script>
 </body>
 </html>
